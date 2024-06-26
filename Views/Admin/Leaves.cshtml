@@ -1,0 +1,49 @@
+@model IEnumerable<RegistrationWebApp.Models.Leave>
+@{
+    ViewData["Title"] = "Leave Requests";
+}
+
+<h2>Leave Requests</h2>
+
+@if (Model != null && Model.Any())
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>User</th>
+                <th>Start Date</th>
+                <th>End Date</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var leave in Model)
+            {
+                <tr>
+                    <td>@leave.User.Email</td>
+                    <td>@leave.StartDate.ToShortDateString()</td>
+                    <td>@leave.EndDate.ToShortDateString()</td>
+                    <td>@(leave.IsApproved == null ? "Pending" : leave.IsApproved.Value ? "Approved" : "Rejected")</td>
+                    <td>
+                        @if (leave.IsApproved == null)
+                        {
+                            <form asp-action="Approve" method="post" style="display:inline">
+                                <input type="hidden" name="id" value="@leave.Id" />
+                                <button type="submit" class="btn btn-success">Approve</button>
+                            </form>
+                            <form asp-action="Reject" method="post" style="display:inline">
+                                <input type="hidden" name="id" value="@leave.Id" />
+                                <button type="submit" class="btn btn-danger">Reject</button>
+                            </form>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>No pending leave requests.</p>
+}
